@@ -3,45 +3,37 @@ from rclpy.node import Node
 from std_msgs.msg import Int16
 from std_msgs.msg import Int32MultiArray
 
-global serialFlag
-serialFlag = 1;
-
 import serial
-roboteq_obj = serial.Serial(
-port='/dev/ttyACM0',
-baudrate=115200,
-parity=serial.PARITY_NONE,
-stopbits=serial.STOPBITS_ONE,
-bytesize=serial.EIGHTBITS,
-timeout=1)
+import os
 
-#serialFlag = 1
-#except:
-#    print("Serial doesn't exist.")
+class MotorDriver(Node):
+    def __init__(self, serial_port='/dev/ttyACM0', baudrate=115200):
+        super().__init__('cmd_roboteq')
+        self.robot_id = os.getenv("ROBOT_ID")
 
-class motor_driver(Node):
+        self.roboteq_obj = serial.Serial(
+            port=serial_port,
+            baudrate=baudrate,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            bytesize=serial.EIGHTBITS,
+            timeout=1
+            )
 
-    def __init__(self):
-        super().__init__('cmd_roboteq2')
-        self.inCmd = 0.0
         self.subscription = self.create_subscription(
             Int32MultiArray,
-            '/p2/ch_vals',
+            f'/{self.robot_id}/ch_vals',
             self.cmd_callback,
             5)
         self.subscription  # prevent unused variable warning
 
     def move_motor_ch1(self, val):
-        global serialFlag
-        payload1 = "!G 1 " + str(-val) + "_"
-        #if(serialFlag):
-        roboteq_obj.write(str.encode(payload1))
+        payload1 = f"!G 1 {val}_"
+        self.roboteq_obj.write(str.encode(payload1))
     
     def move_motor_ch2(self, val):
-        global serialFlag
-        payload2 = "!G 2 " + str(val) + "_"
-        #if(serialFlag):
-        roboteq_obj.write(str.encode(payload2))
+        payload2 = f"!G 2 {-val}_"
+        self.roboteq_obj.write(str.encode(payload2))
             
     def cmd_callback(self, msg):
         inCmd1 = msg.data[0]
@@ -49,9 +41,10 @@ class motor_driver(Node):
         self.move_motor_ch1(inCmd1)
         self.move_motor_ch2(inCmd2)
 
+
 def main(args=None):
     rclpy.init(args=args)
-    minimal_subscriber = motor_driver()
+    minimal_subscriber = MotorDriver()
     rclpy.spin(minimal_subscriber)
     minimal_subscriber.destroy_node()
     rclpy.shutdown()
