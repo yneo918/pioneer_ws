@@ -1,1 +1,1 @@
-pip install adafruit-circuitpython-gps
+pip install adafruit-circuitpython-gps --break-system-packages

@@ -19,18 +19,19 @@ import os
 class ReadImu(Node):
     def __init__(self):
         self.robot_id = os.getenv("ROBOT_ID")
+        self.username = os.getenv("USER")
         super().__init__(f'{self.robot_id}_imu')
         
         self.i2c = board.I2C()  # uses board.SCL and board.SDA
         # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
         self.sensor = adafruit_bno055.BNO055_I2C(self.i2c)
         self.declare_parameters(
-             namespace='',
-             parameters=[
-                  ('calibrateIMU',None),
-                  ('calibOffsetsRadii',None),
-                  ('calibFileLoc',None)
-             ]
+            namespace='',
+            parameters=[
+                ('calibrateIMU', 0),
+                ('calibOffsetsRadii', [3, 146, 3, 232, 0, 0, 255, 255, 255, 255, 239, 131, 252, 100, 254, 79, 255, 227, 0, 19, 255, 204]),
+                ('calibFileLoc', f"/home/{self.username}/ros_ws/src/imu_core/config/paramsIMU.yaml")
+            ]
         )
         self.publisher_quaternion = self.create_publisher(Quaternion, f'{self.robot_id}/imu/quaternion', 1)
         self.publisher_euler = self.create_publisher(Float32MultiArray, f'{self.robot_id}/imu/eulerAngle', 3)
@@ -49,7 +50,7 @@ class ReadImu(Node):
         if(self.get_parameter('calibrateIMU').get_parameter_value()):
             calib_data_param = self.get_parameter('calibOffsetsRadii').get_parameter_value().integer_array_value
             print(self.get_parameter('calibrateIMU').get_parameter_value())
-            self.set_calibration(self.sensor,calib_data_param)
+            self.set_calibration(calib_data_param)
 
         timer_period = 0.1  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -66,7 +67,7 @@ class ReadImu(Node):
         elif(set_calib_param):
             # Set Calibration Offsets/Radii from parameters file
             calib_data = self.get_parameter('calibOffsetsRadii').get_parameter_value().integer_array_value
-            self.set_calibration(self.sensor,calib_data)
+            self.set_calibration(calib_data)
         elif(store_calib):
             #Store current calib offsets/radii in parameters file
             #Also set parameter CalibIMU to True so offsets will be used next time
