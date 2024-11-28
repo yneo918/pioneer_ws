@@ -5,11 +5,13 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Bool
 
+import os
 
 class joy_process(Node):
 
     def __init__(self):
         super().__init__('rover2_teleop')
+        self.robot_id = os.getenv("ROBOT_ID")
         self.subscription = self.create_subscription(
             Joy,
             'joy',
@@ -17,14 +19,20 @@ class joy_process(Node):
             10)
         self.subscription  # prevent unused variable warning
         
-        self.lx_axisN = 1
-        self.az_axisN = 3
-        self.en_buttonN = 4
+        self.lx_axisN = 1 # LY
+        self.az_axisN = 3 # RX
+        self.en_buttonN = 4 # LB
 
         #self.j_lx_lx = 0
         #self.j_az = 0 
-        self.publisher_cmd_vel = self.create_publisher(Twist, '/p2/cmd_vel', 5)
-        self.publisher_en = self.create_publisher(Bool, '/p2/enable', 1)
+        self.publisher_cmd_vel = self.create_publisher(
+            Twist, 
+            f'/{self.robot_id}/cmd_vel', 
+            5)
+        self.publisher_en = self.create_publisher(
+            Bool, 
+            f'/{self.robot_id}/enable', 
+            1)
     
     
     def joy_callback(self, msg):

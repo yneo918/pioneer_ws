@@ -19,11 +19,15 @@ class GetMoveCmds(Node):
         self.subscription = self.create_subscription(
             Twist,
             f'/{self.robot_id}/cmd_vel',
-            self.move_cmd_callback, 5)
+            self.move_cmd_callback, 
+            5)
         self.subscription  
 
         # Create a publisher for the left & right wheel's control signal on the their topics
-        self.pub_move = self.create_publisher(Int32MultiArray, f'/{self.robot_id}/ch_vals', 5)
+        self.pub_move = self.create_publisher(
+            Int32MultiArray, 
+            f'/{self.robot_id}/ch_vals',
+            5)
 
         self.lx = 0.0
         self.az = 0.0
