@@ -20,9 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'run_gps1 = gps_core.run_gps1:main',
+            'run_gps1 = gps_core.run_gps:main',
             'diff_gps_run = gps_core.diff_gps_run:main',
-            'usb_gps_publisher = gps_core.usb_gps_node:main',
         ],
     },
 )
