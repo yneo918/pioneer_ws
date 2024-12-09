@@ -12,8 +12,8 @@ class GetMoveCmds(Node):
 
     def __init__(self):
         # Initialize the Node with the name 'movebase_kinematics'
-        super().__init__('movebase_kinematics')
         self.robot_id = os.getenv("ROBOT_ID")
+        super().__init__(f'{self.robot_id}movebase_kinematics')
 
         # Create a subscription to the 'cmd_vel' topic with a callback function 
         self.subscription = self.create_subscription(

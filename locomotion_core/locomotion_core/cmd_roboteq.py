@@ -8,8 +8,8 @@ import os
 
 class MotorDriver(Node):
     def __init__(self, serial_port='/dev/ttyACM0', baudrate=115200):
-        super().__init__('cmd_roboteq')
         self.robot_id = os.getenv("ROBOT_ID")
+        super().__init__(f'{self.robot_id}_cmd_roboteq')
 
         self.roboteq_obj = serial.Serial(
             port=serial_port,
