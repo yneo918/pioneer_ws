@@ -1,5 +1,9 @@
 from setuptools import setup
 
+import os
+
+robot_id = os.getenv("ROBOT_ID")
+
 package_name = 'locomotion_core'
 
 setup(
@@ -20,8 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'movebase_kinematics = locomotion_core.movebase_kinematics:main',
-            'cmd_roboteq = locomotion_core.cmd_roboteq:main',
+            f'{robot_id}_movebase_kinematics = locomotion_core.movebase_kinematics:main',
+            f'{robot_id}_cmd_roboteq = locomotion_core.cmd_roboteq:main',
         ],
     },
 )

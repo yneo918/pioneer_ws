@@ -17,17 +17,18 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    robot_id = os.getenv("ROBOT_ID")
     ld = LaunchDescription()
     
     # Nodes
     drive_core = Node(
         package="locomotion_core",
-        executable="movebase_kinematics",
+        executable=f"{robot_id}_movebase_kinematics",
         )
 
     motor_driver = Node(
         package="locomotion_core",
-        executable="cmd_roboteq",
+        executable=f"{robot_id}_cmd_roboteq",
     )
 
     
