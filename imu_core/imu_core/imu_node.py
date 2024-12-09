@@ -22,6 +22,8 @@ class ReadImu(Node):
         self.username = os.getenv("USER")
         super().__init__(f'{self.robot_id}_imu')
         
+        self.heading_offset = int(os.getenv("IMU_OFFSET"))
+
         self.i2c = board.I2C()  # uses board.SCL and board.SDA
         # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
         self.sensor = adafruit_bno055.BNO055_I2C(self.i2c)
@@ -142,6 +144,7 @@ class ReadImu(Node):
         #Publish Euler Angle Data
         msg_euler = Float32MultiArray()
         msg_euler.data = self.sensor.euler
+        msg_euler.data[0] = (msg_euler.data[0] + self.heading_offset) % 360
         self.publisher_euler.publish(msg_euler)
 
         #Publish Calibration Status

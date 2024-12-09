@@ -20,21 +20,20 @@ def generate_launch_description():
     ld = LaunchDescription()
     
     # Nodes
-    drive_core = Node(
-        package="locomotion_core",
-        executable="movebase_kinematics",
-        )
+    run_joy_node = Node(
+        package="joy",
+        executable="joy_node",
+    )
 
-    motor_driver = Node(
-        package="locomotion_core",
-        executable="cmd_roboteq",
+    joy_to_cmd_vel = Node(
+        package="teleop_core_direct",
+        executable="rover2_joy",
     )
 
     
 
-    ld.add_action(drive_core)
-    ld.add_action(motor_driver)
+    ld.add_action(run_joy_node)
+    ld.add_action(joy_to_cmd_vel)
 
     return ld
-
 

@@ -20,20 +20,18 @@ def generate_launch_description():
     ld = LaunchDescription()
     
     # Nodes
-    drive_core = Node(
-        package="locomotion_core",
-        executable="movebase_kinematics",
+    gps_node = Node(
+        package="gps_core",
+        executable="run_gps1",
         )
 
-    motor_driver = Node(
-        package="locomotion_core",
-        executable="cmd_roboteq",
-    )
+    imu_node = Node(
+        package="imu_core",
+        executable="run_imu",
+    ) 
 
-    
-
-    ld.add_action(drive_core)
-    ld.add_action(motor_driver)
+    ld.add_action(gps_node)
+    ld.add_action(imu_node)
 
     return ld
 
