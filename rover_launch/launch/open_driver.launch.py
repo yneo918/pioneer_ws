@@ -24,7 +24,7 @@ def generate_launch_description():
     drive_core = Node(
         package="locomotion_core",
         executable=f"{robot_id}_movebase_kinematics",
-        parameters=[{"max_vel": 50}]
+        parameters=[{"max_vel": 600}]
         )
 
     motor_driver = Node(

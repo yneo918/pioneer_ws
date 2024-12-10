@@ -17,25 +17,24 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    robot_id = os.getenv("ROBOT_ID")
     ld = LaunchDescription()
+
+    # include another launch file
+    driver = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('rover_launch'),
+                'open_driver.launch.py')))
     
-    # Nodes
-    drive_core = Node(
-        package="locomotion_core",
-        executable=f"{robot_id}_movebase_kinematics",
-        parameters=[{"max_vel": 50}]
-        )
-
-    motor_driver = Node(
-        package="locomotion_core",
-        executable=f"{robot_id}_cmd_roboteq",
-    )
-
+    sensor = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('rover_launch'),
+                'sensor.launch.py')))
     
 
-    ld.add_action(drive_core)
-    ld.add_action(motor_driver)
+    ld.add_action(driver)
+    ld.add_action(sensor)
 
     return ld
 

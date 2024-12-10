@@ -14,6 +14,8 @@ class GetMoveCmds(Node):
         # Initialize the Node with the name 'movebase_kinematics'
         self.robot_id = os.getenv("ROBOT_ID")
         super().__init__(f'{self.robot_id}_movebase_kinematics')
+        self.declare_parameter('max_vel', 50)
+        self.max_vel = self.get_parameter('max_vel').value
 
         # Create a subscription to the 'cmd_vel' topic with a callback function 
         self.subscription = self.create_subscription(
@@ -42,8 +44,8 @@ class GetMoveCmds(Node):
         az = msg.angular.z
 
         # [EDIT THE TWO LINES BELOW] Calculate control signals based on 'linear_x' and 'angular_z' values 
-        vel_left  = int(600*(lx - 2.0*az*0.32)/(0.111*2*pi))
-        vel_right = int(600*(lx + 2.0*az*0.32)/(0.111*2*pi))
+        vel_left  = int(self.max_vel*(lx - 2.0*az*0.32)/(0.111*2*pi))
+        vel_right = int(self.max_vel*(lx + 2.0*az*0.32)/(0.111*2*pi))
 
         # construct payload with left & rigth velocities 
         payload = Int32MultiArray()
